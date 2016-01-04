@@ -6,19 +6,25 @@ var connectionConfig: sql.config = {
     server: 'pflivesqla.prof.gruppo24.net\\dbudea',
     database: 'DEABE',
     user: 'deadsp_login',
-    password: 'password'
+    password: 'password',
+    connectionTimeout: 5000
 }
-
-var connection: sql.Connection = new sql.Connection(connectionConfig);
 
 interface IWorkflow {
     id: number,
     nome: string
 }
 
-connection.on('connect', function () {
+//var connection: sql.Connection = new sql.Connection(connectionConfig);
 
-    var req: sql.Request = new sql.Request(connection);
+new sql.Connection(connectionConfig).connect(function(err) {
+
+    if (err) {
+        console.log(`Error: ${err}`);
+        return;
+    }
+
+    var req: sql.Request = new sql.Request();
 
     // Callback 
     /*
@@ -37,7 +43,7 @@ connection.on('connect', function () {
     req.query<IWorkflow>("select id, nome from workflow order by nome")
         .then((recordset: IWorkflow[]) => {
 
-            recordset.forEach((r:IWorkflow) => {
+            recordset.forEach((r: IWorkflow) => {
                 console.log(` - ${r.id}. ${r.nome}`);
             });
 
@@ -48,11 +54,4 @@ connection.on('connect', function () {
         });
 });
 
-connection.on('close', function () {
-    console.log('close');
-});
 
-connection.on('err', function (err:Error) {
-    console.log(`connection error: ${err.message}`);
-});
-connection.connect();
