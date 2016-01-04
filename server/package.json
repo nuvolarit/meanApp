@@ -1,0 +1,12 @@
+{
+  "name": "NodejsConsoleApp1",
+  "version": "0.0.0",
+  "description": "NodejsConsoleApp1",
+  "main": "./build/app.js",
+  "author": {
+    "name": "paoraf00"
+  },
+  "dependencies": {
+    "mssql": "^2.6.2"
+  }
+}
