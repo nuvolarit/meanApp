@@ -6,7 +6,7 @@ var connectionConfig: sql.config = {
     server: 'pflivesqla.prof.gruppo24.net\\dbudea',
     database: 'DEABE',
     user: 'deadsp_login',
-    password: 'password',
+    password: '********',
     connectionTimeout: 5000
 }
 
