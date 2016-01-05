@@ -1,30 +1,37 @@
 ﻿/// <reference path="../typings/mssql/mssql.d.ts" />
+/// <reference path="../typings/nconf/nconf.d.ts" />
+/// <reference path="../typings/node/node.d.ts" />
 
+import * as nconf from "nconf";
 import * as sql from "mssql";
+import * as path from "path";
+import * as fs from "fs";
 
-var connectionConfig: sql.config = {
-    server: 'pflivesqla.prof.gruppo24.net\\dbudea',
-    database: 'DEABE',
-    user: 'deadsp_login',
-    password: '********',
-    connectionTimeout: 5000
+var configOption: nconf.IOptions = {
+    env: true,
+    argv: true,
+    store: {
+        type: 'file',
+        file: path.join(__dirname, 'config.json')
+    }
 }
+var config: nconf.Provider = new nconf.Provider(configOption);
 
 interface IWorkflow {
     id: number,
     nome: string
 }
 
-//var connection: sql.Connection = new sql.Connection(connectionConfig);
+var connection: sql.Connection = new sql.Connection(config.get("mssqlConfig"));
 
-new sql.Connection(connectionConfig).connect(function(err) {
+connection.connect(function(err) {
 
     if (err) {
         console.log(`Error: ${err}`);
         return;
     }
 
-    var req: sql.Request = new sql.Request();
+    var req: sql.Request = new sql.Request(connection);
 
     // Callback 
     /*
@@ -40,7 +47,7 @@ new sql.Connection(connectionConfig).connect(function(err) {
 
     // Promise
     //var p: Promise<IWorkflow[]> = req.query<IWorkflow>("select id, nome from workflows");
-    req.query<IWorkflow>("select id, nome from workflow order by nome")
+    req.query<IWorkflow>("select top 10 id, nome from workflow order by id")
         .then((recordset: IWorkflow[]) => {
 
             recordset.forEach((r: IWorkflow) => {
